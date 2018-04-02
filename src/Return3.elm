@@ -16,6 +16,8 @@ module Return3
         , withTuple
         )
 
+import Return2 as R2
+
 
 type alias Return model msg reply =
     ( model, Cmd msg, Maybe reply )
@@ -81,6 +83,7 @@ mapReply f ( model, cmd, reply ) =
     ( model, cmd, f reply )
 
 
-incorp : (subModel -> Maybe reply -> model -> model) -> model -> Return subModel msg reply -> ( model, Cmd msg )
+incorp : (subModel -> Maybe reply -> model -> ( model, Cmd msg )) -> model -> Return subModel msg reply -> ( model, Cmd msg )
 incorp f model ( subModel, cmd, reply ) =
-    ( f subModel reply model, cmd )
+    f subModel reply model
+        |> R2.addCmd cmd
