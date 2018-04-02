@@ -4,7 +4,7 @@ This package is for handling the subtle architectural problems associated with u
 
 ## Example
 
-```
+```elm
 -- Main.elm --
 import Login
 import Return2 as R2
