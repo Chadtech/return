@@ -1,6 +1,6 @@
 # Return
 
-This package is for handling the subtle architectural problems associated with update nested update functions. There are no simple principles at work here, this package is a product of my cumulated experience from writing a lot Elm and paying attention to what other people do when they write Elm.
+This package is for handling the subtle architectural problems associated with nested update functions in big Elm applications. There are no simple principles at work here; this package is just a product of my cumulated experience from writing a lot Elm and paying attention to what other people do when they write Elm. Immediately below is a code example, and further below is an explanation of how I got here.
 
 ## Example
 
@@ -103,14 +103,13 @@ update msg model =
 
 ## Explanation
 
-In Elm, our update functions return a tuple contain our `Model` and whatever side effects we want to occur.
+In Elm, our update functions return a tuple contain our `Model` and whatever side effects we want to occur outside the Elm run-time.
 ```
 ( Model, Cmd Msg )
 ```
-In practice, that means we have to type stuff like this
+In practice, that means we have to type stuff like this.
 ```elm
-    ThingHappened ->
-        ( model, thingCmd )
+    ( editThing model, thingCmd (getData model))
 ```
 Unfortunately this turns out to be not so nice if you write a lot of Elm. We have to type this tuple a lot, and doing so is a hassle because there are characters on the left, right, and center of the tuple you have to type. It would be must easier if you only had to put your cursor in one spot. As an alternative, some of us began using our own infix operator, most notably the folks at NoRedInk used the "rocket" operator.
 ```elm
@@ -142,4 +141,4 @@ Also, I found that the name `ExternalMsg` didnt make much sense. `Msg`s reflect 
 ```elm
     (model, cmd, Maybe reply)
 ```
-Improvements from this point are harder and more tenuous, but I have also learned a bit from (Fresheyeball/elm-return)[http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/] as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes from functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19).
+Improvements from this point are harder and more tenuous, but I have also learned a bit from (Fresheyeball/elm-return)[http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/] as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes from functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
