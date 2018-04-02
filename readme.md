@@ -111,7 +111,7 @@ In practice, that means we have to type stuff like this.
 ```elm
     ( editThing model, thingCmd (getData model))
 ```
-Unfortunately this turns out to be not so nice if you write a lot of Elm. We have to type this tuple a lot, and doing so is a hassle because there are characters on the left, right, and center of the tuple you have to type. It would be must easier if you only had to put your cursor in one spot. As an alternative, some of us began using our own infix operator, most notably the folks at NoRedInk used the "rocket" operator.
+Unfortunately this turns out to be not so nice if you write a lot of Elm. We have to type this tuple a lot, and doing so is a hassle because there are characters on the left, right, and center of the tuple you have to type. It would be must easier if you only had to put your cursor in one spot. As an alternative some of us began using our own infix operators; most notably the folks at NoRedInk use the ["rocket" operator](http://package.elm-lang.org/packages/NoRedInk/rocket-update/latest).
 ```elm
     model => thingCmd
 
@@ -119,7 +119,7 @@ Unfortunately this turns out to be not so nice if you write a lot of Elm. We hav
 (=>) model cmd =
     (model, cmd)
 ```
-Thats pretty good. But as I write this, the expectation is that 0.19 wont allow custom infix operators, which is probably for the best. We will need a new solution. I really like [Janiczek/cmd-extra](http://package.elm-lang.org/packages/Janiczek/cmd-extra/latest). His package exposes some extremely readable functions, like `withCmd`.
+Thats pretty good. But as I write this, the expectation is that the upcoming Elm 0.19 wont allow custom infix operators (which is probably for the best). We will need a new solution. I really like [Janiczek/cmd-extra](http://package.elm-lang.org/packages/Janiczek/cmd-extra/latest). His package exposes some extremely readable functions, like `withCmd`.
 ```elm
     model 
         |> withCmd cmd
@@ -127,7 +127,6 @@ Thats pretty good. But as I write this, the expectation is that 0.19 wont allow 
 withCmd : Cmd msg -> model -> (model, Cmd msg)
 ```
 Its a little bit more verbose, but it reads really nice and it plays well with whatever else is going on in your update function. If this were the end of the story, I would just settle on Janiczek's package, but its not. Big Elm applications usually have sub-update functions, sub-models, and sub-msgs. The communication between parent and child update functions can be kind of complicated, and often we need to transform values after they have been bundled into tuples. Our update function technique has to work well in the broader context of what update functions are doing in our application. Richard Feldman uses the `ExternalMsg` type for communication from child to parent, and sneaks it into his update function return values. His update functions result in something that looks like this.
-
 ```elm
     ((model, cmd), externalMsg)
 ```
@@ -137,8 +136,8 @@ That works very well. One criticism I have however, is nested tuples are kind of
 ```elm
     (model, cmd, externalMsg)
 ```
-Also, I found that the name `ExternalMsg` didnt make much sense. `Msg`s reflect external events that actually happened in your application that have indeterminate consequence. Stuff like mouse clicks, or http responses; your application just knows what happened, and thereafter it needs to figure out what to do. `ExternalMsg`s arent the same kind of thing, despite what the name implies. They represent interal results from within your application which usually have explicit consequence. So I started calling them `Reply` since they are like replies to the news sub-states receive from the parent application state. Also I made it into a `Maybe Reply`, so you can consider the possibility of no reply abstractly, without assuming any `Reply` type
+Also, I found that the name `ExternalMsg` didnt make much sense. `Msg`s reflect external events that actually happened in your application that have indeterminate consequence. Stuff like mouse clicks, or http responses; your application just knows what happened and thereafter it needs to figure out what to do. `ExternalMsg`s arent the same kind of thing despite what the name implies. They represent interal results from within your application which usually have explicit consequence. So I started calling them `Reply` since they are like replies to the news sub-states receive from the parent application state. Also I made it into a `Maybe Reply`, so you can consider the possibility of no reply abstractly, without assuming any particular `Reply` type
 ```elm
     (model, cmd, Maybe reply)
 ```
-Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes from functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
+Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
