@@ -104,7 +104,7 @@ update msg model =
 ## Explanation
 
 In Elm, our update functions return a tuple contain our `Model` and whatever side effects we want to occur outside the Elm run-time.
-```
+```elm
 ( Model, Cmd Msg )
 ```
 In practice, that means we have to type stuff like this.
@@ -119,7 +119,7 @@ Unfortunately this turns out to be not so nice if you write a lot of Elm. We hav
 (=>) model cmd =
     (model, cmd)
 ```
-Thats pretty good. But as I write this, the expectation is that 0.19 wont allow custom infix operators, which is probably for the best. We will need a new solution. I really like (Janiczek/cmd-extra)[http://package.elm-lang.org/packages/Janiczek/cmd-extra/latest]. His package exposes some extremely readable functions, like `withCmd`.
+Thats pretty good. But as I write this, the expectation is that 0.19 wont allow custom infix operators, which is probably for the best. We will need a new solution. I really like [Janiczek/cmd-extra](http://package.elm-lang.org/packages/Janiczek/cmd-extra/latest). His package exposes some extremely readable functions, like `withCmd`.
 ```elm
     model 
         |> withCmd cmd
@@ -141,4 +141,4 @@ Also, I found that the name `ExternalMsg` didnt make much sense. `Msg`s reflect 
 ```elm
     (model, cmd, Maybe reply)
 ```
-Improvements from this point are harder and more tenuous, but I have also learned a bit from (Fresheyeball/elm-return)[http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/] as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes from functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
+Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes from functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
