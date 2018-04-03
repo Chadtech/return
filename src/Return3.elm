@@ -78,7 +78,7 @@ mapCmd f ( model, cmd, reply ) =
     ( model, Cmd.map f cmd, reply )
 
 
-mapReply : (Maybe reply -> Maybe reply) -> Return model cmd reply -> Return model cmd reply
+mapReply : (Maybe reply -> Maybe reply) -> Return model msg reply -> Return model msg reply
 mapReply f ( model, cmd, reply ) =
     ( model, cmd, f reply )
 
