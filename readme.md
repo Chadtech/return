@@ -65,7 +65,7 @@ setPage pageCtor subModel model =
 
 -- Login.Elm --
 
-import Return3 as R3
+import Return3 as R3 exposing (Return)
 import Return2 as R2
 
 
@@ -126,18 +126,20 @@ Thats pretty good. But as I write this, the expectation is that the upcoming Elm
 
 withCmd : Cmd msg -> model -> (model, Cmd msg)
 ```
-Its a little bit more verbose, but it reads really nice and it plays well with whatever else is going on in your update function. If this were the end of the story, I would just settle on Janiczek's package, but its not. Big Elm applications usually have sub-update functions, sub-models, and sub-msgs. The communication between parent and child update functions can be kind of complicated, and often we need to transform values after they have been bundled into tuples. Our update function technique has to work well in the broader context of what update functions are doing in our application. Richard Feldman uses the `ExternalMsg` type for communication from child to parent, and sneaks it into his update function return values. His update functions result in something that looks like this.
-```elm
-    ((model, cmd), externalMsg)
-```
-The `ExternalMsg` communicates something to the parent. The best example of this is having a login page with its own update function, but it needs to tell the main update function who the user is once they successfully log in. So the sub update function in your login page doesnt just return a sub model and sub cmds, its also returning information that the application as a whole needs to know, like that the user session has changed.
+Its a little bit more verbose, but it reads really nice and it plays well with whatever else is going on in your update function. If this were the end of the story, I would just settle on Janiczek's package, but its not. Big Elm applications usually have sub-update functions, sub-models, and sub-msgs. The communication between parent and child update functions can be kind of complicated, and often we need to transform values after they have been bundled into tuples. Our update function technique has to work well in the broader context of what update functions are doing in our application. 
 
-That works very well. One criticism I have however, is nested tuples are kind of hard to work with. The model is in a tuple in a tuple. So if you want to access it, say to transform it, you need to do `Tuple.first >> Tuple.first`. Flat data structures are nicer, so I have learned to do triples instead.
+Richard Feldman uses the `ExternalMsg` type for communication from child update functions to parent update functions. His update functions result in something that looks like this.
+```elm
+    ((Model, Cmd Msg), ExternalMsg)
+```
+The `ExternalMsg` carries information from the sub module to its parent module. The best example of this is having a login page with its own update function, that needs to tell the main update function who the user is once they successfully log in. The sub update function in your login page doesnt just return a sub-model and sub-cmds, it also returns information that the application as a whole needs to know, like that the user session has changed.
+
+That works very well. One criticism I have however, is nested tuples are kind of hard to work with. The model is in a tuple in a tuple. So if you want to access it- say to transform it- you need to do `Tuple.first >> Tuple.first`. Flat data structures are nicer, so I have learned to do triples instead.
 ```elm
     (model, cmd, externalMsg)
 ```
-Also, I found that the name `ExternalMsg` didnt make much sense. `Msg`s reflect external events that actually happened in your application that have indeterminate consequence. Stuff like mouse clicks, or http responses; your application just knows what happened and thereafter it needs to figure out what to do. `ExternalMsg`s arent the same kind of thing despite what the name implies. They represent interal results from within your application which usually have explicit consequence. So I started calling them `Reply` since they are like replies to the news sub-states receive from the parent application state. Also I made it into a `Maybe Reply`, so you can consider the possibility of no reply abstractly, without assuming any particular `Reply` type
+Also, I found that the name `ExternalMsg` didnt make much sense. Regular `Msg`s reflect external events that actually happened in your application that have indeterminate consequence. Stuff like mouse clicks, or http responses; your application just knows what happened and thereafter needs to figure out what to do. `ExternalMsg`s arent the same kind of thing despite what the name implies. They represent interal results from within your application which usually have explicit consequence. I instead started calling them `Reply` since they are like replies to the news sub-modulereceive from the parent-modules. Also I made it into a `Maybe Reply`, so you can consider the possibility of no reply abstractly, without assuming any particular `Reply` type.
 ```elm
     (model, cmd, Maybe reply)
 ```
-Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one.
+Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one that I have tried to reproduce in this package.
