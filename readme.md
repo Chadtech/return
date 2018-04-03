@@ -136,10 +136,10 @@ The `ExternalMsg` carries information from the sub module to its parent module. 
 
 That works very well. One criticism I have however, is nested tuples are kind of hard to work with. The model is in a tuple in a tuple. So if you want to access it- say to transform it- you need to do `Tuple.first >> Tuple.first`. Flat data structures are nicer, so I have learned to do triples instead.
 ```elm
-    (model, cmd, externalMsg)
+    (Model, Cmd Msg, ExternalMsg)
 ```
 Also, I found that the name `ExternalMsg` didnt make much sense. Regular `Msg`s reflect external events that actually happened in your application that have indeterminate consequence. Stuff like mouse clicks, or http responses; your application just knows what happened and thereafter needs to figure out what to do. `ExternalMsg`s arent the same kind of thing despite what the name implies. They represent interal results from within your application which usually have explicit consequence. I instead started calling them `Reply` since they are like replies to the news sub-modulereceive from the parent-modules. Also I made it into a `Maybe Reply`, so you can consider the possibility of no reply abstractly, without assuming any particular `Reply` type.
 ```elm
-    (model, cmd, Maybe reply)
+    (Model, Cmd Msg, Maybe Reply)
 ```
 Improvements from this point are harder and more tenuous, but I have also learned a bit from [Fresheyeball/elm-return](http://package.elm-lang.org/packages/Fresheyeball/elm-return/6.0.3/) as well. Sub-models need to be incorporated back into their parent-models, and usually in very regular and predictable ways, such as just being a field inside a record. Fresheyeball's package exposes functions that simplify that incorporation process. Unfortunately, I think Fresheyeball's package indulges a lot of functional programming stuff beyond its usefulness (and it uses infix operators, so its usefulness wont last into 0.19). But regardless, his approach to formalizing and mutating return results is a good one that I have tried to reproduce in this package.
