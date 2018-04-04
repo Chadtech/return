@@ -115,7 +115,7 @@ addCmds newCmds ( model, cmd ) =
     Return2.model (model, cmd) == model
 
 -}
-model : ( model, Cmd msg )
+model : ( model, Cmd msg ) -> model
 model =
     Tuple.first
 
@@ -125,7 +125,7 @@ model =
     Return2.cmd (model, cmd) == cmd
 
 -}
-cmd : ( model, Cmd msg )
+cmd : ( model, Cmd msg ) -> Cmd msg
 cmd =
     Tuple.second
 
