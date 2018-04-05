@@ -103,7 +103,7 @@ update msg model =
 
 ## Explanation
 
-In Elm, our update functions return a tuple contain our `Model` and whatever side effects we want to occur outside the Elm run-time.
+In Elm, our update functions return a tuple containing our `Model` and whatever side effects we want to occur outside the Elm run-time.
 ```elm
 ( Model, Cmd Msg )
 ```
@@ -111,7 +111,7 @@ In practice, that means we have to type stuff like this.
 ```elm
     ( editThing model, thingCmd (getData model))
 ```
-Unfortunately this turns out to be not so nice if you write a lot of Elm. We have to type this tuple a lot, and doing so is a hassle because there are characters on the left, right, and center of the tuple you have to type. It would be must easier if you only had to put your cursor in one spot. As an alternative some of us began using our own infix operators; most notably the folks at NoRedInk use the ["rocket" operator](http://package.elm-lang.org/packages/NoRedInk/rocket-update/latest).
+Unfortunately this turns out to be not so nice. We have to type this tuple a lot, and doing so is a hassle because there are characters on the left, right, and center of the tuple you have to type. It would be much easier if you only had to put your cursor in one spot rather than jump around. As an alternative some of us began using our own infix operators; most notably the folks at NoRedInk use the ["rocket" operator](http://package.elm-lang.org/packages/NoRedInk/rocket-update/latest).
 ```elm
     model => thingCmd
 
