@@ -44,8 +44,8 @@ module Return2
 
 -}
 withCmd : Cmd msg -> model -> ( model, Cmd msg )
-withCmd cmd model =
-    ( model, cmd )
+withCmd cmd_ model_ =
+    ( model_, cmd_ )
 
 
 {-| Pack multiple cmds with your model
@@ -55,8 +55,8 @@ withCmd cmd model =
 
 -}
 withCmds : List (Cmd msg) -> model -> ( model, Cmd msg )
-withCmds cmds model =
-    ( model, Cmd.batch cmds )
+withCmds cmds model_ =
+    ( model_, Cmd.batch cmds )
 
 
 {-| Pack a model with your cmd. This is useful if the business logic for your command is more complicated than the business logic for your model
@@ -70,7 +70,7 @@ withCmds cmds model =
 -}
 withModel : model -> Cmd msg -> ( model, Cmd msg )
 withModel =
-    (,)
+    Tuple.pair
 
 
 {-| Pack your model with no cmd
@@ -80,8 +80,8 @@ withModel =
 
 -}
 withNoCmd : model -> ( model, Cmd msg )
-withNoCmd model =
-    ( model, Cmd.none )
+withNoCmd model_ =
+    ( model_, Cmd.none )
 
 
 {-| Sometimes you need to add a cmd to an already packaged model and cmd.
@@ -93,8 +93,8 @@ withNoCmd model =
 
 -}
 addCmd : Cmd msg -> ( model, Cmd msg ) -> ( model, Cmd msg )
-addCmd newCmd ( model, cmd ) =
-    ( model, Cmd.batch [ newCmd, cmd ] )
+addCmd newCmd ( model_, cmd_ ) =
+    ( model_, Cmd.batch [ newCmd, cmd_ ] )
 
 
 {-| Add many cmds to an already packaged model and cmd.
@@ -106,8 +106,8 @@ addCmd newCmd ( model, cmd ) =
 
 -}
 addCmds : List (Cmd msg) -> ( model, Cmd msg ) -> ( model, Cmd msg )
-addCmds newCmds ( model, cmd ) =
-    ( model, Cmd.batch [ Cmd.batch newCmds, cmd ] )
+addCmds newCmds ( model_, cmd_ ) =
+    ( model_, Cmd.batch [ Cmd.batch newCmds, cmd_ ] )
 
 
 {-| Ideally you wouldnt have to deconstruct a tupled model and cmd, but if you need to, this function does it.

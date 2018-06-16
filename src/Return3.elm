@@ -67,8 +67,8 @@ type alias Return model msg reply =
 
 -}
 withReply : reply -> ( model, Cmd msg ) -> Return model msg reply
-withReply reply ( model, cmd ) =
-    ( model, cmd, Just reply )
+withReply reply_ ( model_, cmd_ ) =
+    ( model_, cmd_, Just reply_ )
 
 
 {-| Dont add a reply to your tuple.
@@ -79,8 +79,8 @@ withReply reply ( model, cmd ) =
 
 -}
 withNoReply : ( model, Cmd msg ) -> Return model msg reply
-withNoReply ( model, cmd ) =
-    ( model, cmd, Nothing )
+withNoReply ( model_, cmd_ ) =
+    ( model_, cmd_, Nothing )
 
 
 {-| If building your reply takes a lot of work, use this function.
@@ -93,8 +93,8 @@ withNoReply ( model, cmd ) =
 
 -}
 withTuple : ( model, Cmd msg ) -> reply -> Return model msg reply
-withTuple ( model, cmd ) reply =
-    ( model, cmd, Just reply )
+withTuple ( model_, cmd_ ) reply_ =
+    ( model_, cmd_, Just reply_ )
 
 
 {-| Return the model with no cmd and no reply
@@ -104,8 +104,8 @@ withTuple ( model, cmd ) reply =
 
 -}
 withNothing : model -> Return model msg reply
-withNothing model =
-    ( model, Cmd.none, Nothing )
+withNothing model_ =
+    ( model_, Cmd.none, Nothing )
 
 
 {-| Ideally you wouldnt have to deconstruct a `Return`, but if you need to, this function does it.
@@ -114,8 +114,8 @@ withNothing model =
 
 -}
 model : Return model msg reply -> model
-model ( model, _, _ ) =
-    model
+model ( model_, _, _ ) =
+    model_
 
 
 {-| Get the cmd of an already packed `Return`.
@@ -124,8 +124,8 @@ model ( model, _, _ ) =
 
 -}
 cmd : Return model msg reply -> Cmd msg
-cmd ( _, cmd, _ ) =
-    cmd
+cmd ( _, cmd_, _ ) =
+    cmd_
 
 
 {-| Get the reply of an already packed `Return`, if it exists
@@ -134,8 +134,8 @@ cmd ( _, cmd, _ ) =
 
 -}
 reply : Return model msg reply -> Maybe reply
-reply ( _, _, reply ) =
-    reply
+reply ( _, _, reply_ ) =
+    reply_
 
 
 {-| Sometimes you need to add a cmd to an already packaged `Return`
@@ -147,8 +147,8 @@ reply ( _, _, reply ) =
 
 -}
 addCmd : Cmd msg -> Return model msg reply -> Return model msg reply
-addCmd newCmd ( model, cmd, reply ) =
-    ( model, Cmd.batch [ newCmd, cmd ], reply )
+addCmd newCmd ( model_, cmd_, reply_ ) =
+    ( model_, Cmd.batch [ newCmd, cmd_ ], reply_ )
 
 
 {-| Add many cmds to an already packaged `Return`
@@ -160,8 +160,8 @@ addCmd newCmd ( model, cmd, reply ) =
 
 -}
 addCmds : List (Cmd msg) -> Return model msg reply -> Return model msg reply
-addCmds newCmds ( model, cmd, reply ) =
-    ( model, Cmd.batch [ Cmd.batch newCmds, cmd ], reply )
+addCmds newCmds ( model_, cmd_, reply_ ) =
+    ( model_, Cmd.batch [ Cmd.batch newCmds, cmd_ ], reply_ )
 
 
 {-| If you need to transform just the model in a `Return`, such as if you need to pack a submodel into the main model
@@ -172,8 +172,8 @@ addCmds newCmds ( model, cmd, reply ) =
 
 -}
 mapModel : (a -> b) -> Return a msg reply -> Return b msg reply
-mapModel f ( model, cmd, reply ) =
-    ( f model, cmd, reply )
+mapModel f ( model_, cmd_, reply_ ) =
+    ( f model_, cmd_, reply_ )
 
 
 {-| If you need to transform just the cmd in a `Return`, such as if you need to wrap a sub-modules msg type
@@ -184,14 +184,14 @@ mapModel f ( model, cmd, reply ) =
 
 -}
 mapCmd : (a -> b) -> Return model a reply -> Return model b reply
-mapCmd f ( model, cmd, reply ) =
-    ( model, Cmd.map f cmd, reply )
+mapCmd f ( model_, cmd_, reply_ ) =
+    ( model_, Cmd.map f cmd_, reply_ )
 
 
 {-| -}
 mapReply : (Maybe a -> Maybe b) -> Return model msg a -> Return model msg b
-mapReply f ( model, cmd, reply ) =
-    ( model, cmd, f reply )
+mapReply f ( model_, cmd_, reply_ ) =
+    ( model_, cmd_, f reply_ )
 
 
 {-| `Return`s contain a reply, and that reply needs to be handled much like a `msg` does in an update function.
@@ -218,6 +218,6 @@ mapReply f ( model, cmd, reply ) =
 
 -}
 incorp : (subModel -> Maybe reply -> model -> ( model, Cmd msg )) -> model -> Return subModel msg reply -> ( model, Cmd msg )
-incorp f model ( subModel, cmd, reply ) =
-    f subModel reply model
-        |> R2.addCmd cmd
+incorp f model_ ( subModel, cmd_, reply_ ) =
+    f subModel reply_ model_
+        |> R2.addCmd cmd_
