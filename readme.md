@@ -1,6 +1,6 @@
 ## Depreciated, sort of
 
-This code still works, but it represents a technique of scaling Elm applications that I think is dated at this point (March 2nd, 2019). Nested state used to be more common in Elm, but now Elm people seem to have learned that nesting state is really undesirable. This package represents how I would handle nested state, but the purpose of this package is strongly undermined by the fact that now I just wouldnt nest state to begin with. So, if you wish, I hope this package can serve you well! But, I think you probably shouldnt need it.
+This code still works, but it represents a technique of scaling Elm applications that I think is dated at this point (March 2nd, 2019). Nested state used to be more common in Elm, but now Elm people seem to have learned that nesting state is really undesirable. This package represents how I would handle nested state, but the purpose of this package is strongly undermined by the fact that now I just wouldnt nest state to begin with. So, if you wish, I hope this package can serve you well! Maybe [a similar approach from a true believer in this approach would be better](https://package.elm-lang.org/packages/z5h/component-result/latest/). But, ultimately, I think you probably shouldnt need to do any of this stuff.
 
 Heres some code that shows what I mean..
 ```elm
@@ -56,7 +56,7 @@ init : User -> Login.Model
 update : Login.Msg -> Login.Model -> (Login.Model, Cmd Login.Msg)
 ```
 
-Ever
+Everything below is the original readme preserved for posterity.
 
 
 # Return
