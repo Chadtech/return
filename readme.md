@@ -1,3 +1,64 @@
+## Depreciated, sort of
+
+This code still works, but it represents a technique of scaling Elm applications that I think is dated at this point (March 2nd, 2019). Nested state used to be more common in Elm, but now Elm people seem to have learned that nesting state is really undesirable. This package represents how I would handle nested state, but the purpose of this package is strongly undermined by the fact that now I just wouldnt nest state to begin with. So, if you wish, I hope this package can serve you well! But, I think you probably shouldnt need it.
+
+Heres some code that shows what I mean..
+```elm
+-- The Before Times
+-- parent model has gloally things, and passes them down into child-y things
+
+--      Parent  <---------- handles updates ----------
+--        |                                          |
+--  passes global stuff down                  passes it back up
+--        |                                          |
+--        v                                          |
+--      Child  ---------- updates globally stuff ----- 
+
+type alias Model =
+    { page : Page 
+    , user : User
+    }
+
+type Page 
+    = Home Home.Model
+    | Login Login.Model
+
+
+type ExternalMsg
+    = SetUser User
+
+-- Login.elm
+update : User -> Login.Msg -> Login.Model -> (Login.Model, Cmd Login.Msg, ExternalMsg)
+
+-- Today
+-- Totally flat model, model states pass off globaly stuff to each other
+-- only rule is that all states possess same globaly stuff, and have
+-- methods for accepting and giving global state
+type Model
+    = Home Home.Model
+    | Login Login.Model
+
+getUser : Model -> User
+getUser model =
+    case model of
+        Login loginModel ->
+            loginModel.user
+
+        Home homeModel ->
+            homeModel.user
+
+goToLoginPage : Model -> Model
+goToLoginPage model =
+    Login.init <| getUser model
+
+-- Login.elm
+init : User -> Login.Model
+update : Login.Msg -> Login.Model -> (Login.Model, Cmd Login.Msg)
+```
+
+Ever
+
+
 # Return
 
 This package is for handling the subtle architectural problems associated with nested update functions in big Elm applications. There are no simple principles at work here; this package is just a product of my cumulated experience from writing a lot Elm and paying attention to what other people do when they write Elm. Immediately below is a code example, and further below is an explanation of how I got here.
